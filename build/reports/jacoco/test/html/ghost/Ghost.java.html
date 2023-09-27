@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ghost.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment_2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Ghost.java</span></div><h1>Ghost.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PApplet;
+import processing.core.PImage;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public abstract class Ghost extends Entity{
+  public HashMap&lt;String,Boolean&gt; options;
+  protected Waka waka;
+
+  static protected PImage frightenedSprite;
+
+  protected boolean scatterMode;
+  protected boolean frightenedMode;
+  protected boolean alive;
+  protected boolean debugMode;
+
+  protected int targetX;
+  protected int targetY;
+
+  private int frameFrightenedStart;
+  private int frameScatterStart;
+
+  private List&lt;Integer&gt; scatterLengths;
+  private int scatterLengthsTotal;
+
+  protected ghostType type;
+  //private int currentDirCode;
+
+  public Ghost(int x, int y, Map map, int speed, Waka waka, ghostType type) {
+<span class="fc" id="L34">    super(x,y,map,speed);</span>
+<span class="fc" id="L35">    this.waka = waka;</span>
+<span class="fc" id="L36">    this.scatterMode = false;</span>
+<span class="fc" id="L37">    this.frightenedMode = false;</span>
+<span class="fc" id="L38">    this.type = type;</span>
+<span class="fc" id="L39">    this.alive = true;</span>
+<span class="fc" id="L40">    this.frameFrightenedStart = -1;</span>
+<span class="fc" id="L41">    this.frameScatterStart = -1;</span>
+<span class="fc" id="L42">    this.debugMode = false;</span>
+<span class="fc" id="L43">  }</span>
+
+  public void setX(int x) {
+<span class="fc" id="L46">    this.x = x;</span>
+<span class="fc" id="L47">  }</span>
+  
+  public void setY(int y) {
+<span class="fc" id="L50">    this.y = y;</span>
+<span class="fc" id="L51">  }</span>
+
+  public void setAlive(boolean v) {
+<span class="fc" id="L54">    this.alive = v;</span>
+<span class="fc" id="L55">  }</span>
+
+  public Waka getWaka() {
+<span class="fc" id="L58">    return this.waka;</span>
+  }
+
+  public int getFrameFrightenedStart() {
+<span class="fc" id="L62">    return this.frameFrightenedStart;</span>
+  }
+
+  public int getFrameScatterStart() {
+<span class="fc" id="L66">    return this.frameScatterStart;</span>
+  }
+
+  public boolean toggleScatter(App app) {
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">    this.scatterMode = !this.scatterMode;</span>
+<span class="fc" id="L71">    this.frameScatterStart = app.frameCount;</span>
+
+<span class="fc" id="L73">    return this.scatterMode;</span>
+  }
+
+  public boolean triggerFrightened(App app) {
+<span class="fc" id="L77">    this.frameFrightenedStart = app.frameCount;</span>
+<span class="fc" id="L78">    this.frightenedMode = true;</span>
+
+<span class="fc" id="L80">    return this.frightenedMode;</span>
+  }
+
+  public boolean endFrightened(App app) {
+<span class="fc" id="L84">    this.frightenedMode = false;</span>
+<span class="fc" id="L85">    this.frameFrightenedStart = -1;</span>
+    
+<span class="fc" id="L87">    return this.frightenedMode;</span>
+  }
+
+  public void setSprite(PImage sprite) {
+<span class="nc" id="L91">    this.sprite = sprite;</span>
+<span class="nc" id="L92">  }</span>
+
+  public static void setFrightenedSprite(PImage s) {
+<span class="fc" id="L95">    frightenedSprite = s;</span>
+<span class="fc" id="L96">  }</span>
+  public static PImage getFrightenedSprite() {
+<span class="fc" id="L98">    return frightenedSprite;</span>
+  }
+
+  public boolean onWaka() {
+<span class="fc bfc" id="L102" title="All 4 branches covered.">    if (this.x == this.waka.x &amp;&amp; this.y == this.waka.y) {</span>
+<span class="fc" id="L103">      return true;</span>
+    }
+<span class="fc" id="L105">    return false;</span>
+  }
+
+  public double calcDistance(int x1, int y1, int x2, int y2) {
+<span class="fc" id="L109">    return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));</span>
+  }
+
+  public int chooseDirection(int targetX, int targetY) {
+<span class="fc bfc" id="L113" title="All 2 branches covered.">    if (!atIntersection()) {</span>
+<span class="fc" id="L114">      return -1;</span>
+    }
+<span class="fc" id="L116">    double min = 1000000000;</span>
+<span class="fc" id="L117">    int minDireciton = 0;</span>
+
+<span class="fc" id="L119">    double upDistance = -1;</span>
+<span class="fc" id="L120">    double downDistance = -1;</span>
+<span class="fc" id="L121">    double leftDistance = -1;</span>
+<span class="fc" id="L122">    double rightDistance = -1;</span>
+
+<span class="fc bfc" id="L124" title="All 2 branches covered.">    if (this.options.get(&quot;up&quot;)) {</span>
+<span class="fc" id="L125">      upDistance = calcDistance(this.x, this.y-16, targetX, targetY);</span>
+
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">      if (upDistance &lt; min) {</span>
+<span class="fc" id="L128">        minDireciton = 38;</span>
+<span class="fc" id="L129">        min = upDistance;</span>
+      }
+    }
+
+<span class="fc bfc" id="L133" title="All 2 branches covered.">    if (this.options.get(&quot;down&quot;)) {</span>
+<span class="fc" id="L134">      downDistance = calcDistance(this.x, this.y+16, targetX, targetY);</span>
+
+<span class="fc bfc" id="L136" title="All 2 branches covered.">      if (downDistance &lt; min) {</span>
+<span class="fc" id="L137">        minDireciton = 40;</span>
+<span class="fc" id="L138">        min = downDistance;</span>
+      }
+    }
+
+<span class="fc bfc" id="L142" title="All 2 branches covered.">    if (this.options.get(&quot;left&quot;)) {</span>
+<span class="fc" id="L143">      leftDistance = calcDistance(this.x-16, this.y, targetX, targetY);</span>
+
+<span class="fc bfc" id="L145" title="All 2 branches covered.">      if (leftDistance &lt; min) {</span>
+<span class="fc" id="L146">        minDireciton = 37;</span>
+<span class="fc" id="L147">        min = leftDistance;</span>
+      }
+    }
+
+<span class="fc bfc" id="L151" title="All 2 branches covered.">    if (this.options.get(&quot;right&quot;)) {</span>
+<span class="fc" id="L152">      rightDistance = calcDistance(this.x+16, this.y, targetX, targetY);</span>
+
+<span class="fc bfc" id="L154" title="All 2 branches covered.">      if (rightDistance &lt; min) {</span>
+<span class="fc" id="L155">        minDireciton = 39;</span>
+<span class="fc" id="L156">        min = rightDistance;</span>
+      }
+    }
+
+<span class="fc" id="L160">    return minDireciton;</span>
+  }
+
+  public boolean atIntersection() {
+<span class="fc" id="L164">    int currentCellIndexY = this.y/16;</span>
+<span class="fc" id="L165">    int currentCellIndexX = this.x/16;</span>
+
+<span class="fc" id="L167">    Cell up = this.map.getCellMap().get(currentCellIndexY - 1).get(currentCellIndexX);</span>
+<span class="fc" id="L168">    Cell down = this.map.getCellMap().get(currentCellIndexY + 1).get(currentCellIndexX);</span>
+<span class="fc" id="L169">    Cell left = this.map.getCellMap().get(currentCellIndexY).get(currentCellIndexX - 1);</span>
+<span class="fc" id="L170">    Cell right = this.map.getCellMap().get(currentCellIndexY).get(currentCellIndexX + 1);</span>
+
+<span class="fc" id="L172">    HashMap&lt;String,Boolean&gt; opt = new HashMap&lt;String,Boolean&gt;();</span>
+
+<span class="fc" id="L174">    opt.put(&quot;up&quot;, up.isClear());</span>
+<span class="fc" id="L175">    opt.put(&quot;down&quot;, down.isClear());</span>
+<span class="fc" id="L176">    opt.put(&quot;left&quot;, left.isClear());</span>
+<span class="fc" id="L177">    opt.put(&quot;right&quot;, right.isClear());</span>
+
+
+<span class="fc" id="L180">    opt.put(this.direction.getOppDirString(), false); // Prevents the ghost from turning back on itself</span>
+    
+
+<span class="fc" id="L183">    this.options = opt;</span>
+
+<span class="pc bpc" id="L185" title="2 of 8 branches missed.">    return (left.isClear()||right.isClear()||up.isClear()||down.isClear());</span>
+  }
+
+  public void checkFrightenedEnd(App app) {
+<span class="fc bfc" id="L189" title="All 2 branches covered.">    if (this.frightenedMode == false) {</span>
+<span class="fc" id="L190">      return;</span>
+    }
+<span class="fc" id="L192">    int len = app.getConfig().getFrightenedLength().intValue();</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">    if (app.frameCount &gt; this.frameFrightenedStart + len * 60) {</span>
+<span class="fc" id="L194">      Ghost.endFrightenedMode(app.getGhosts(), app);</span>
+    }
+<span class="fc" id="L196">  }</span>
+
+  public abstract void tick(App app);
+
+
+  public void draw(PApplet app) {
+    // Handles graphics
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">    if (this.alive){</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">      if (!this.frightenedMode) {</span>
+<span class="fc" id="L205">        app.image(this.type.getSprite(),x-4,y-5);</span>
+      } else {
+<span class="fc" id="L207">        app.image(frightenedSprite,x-4,y-5);</span>
+      }
+    }
+    
+<span class="pc bpc" id="L211" title="1 of 4 branches missed.">    if (this.alive &amp;&amp; this.debugMode){</span>
+<span class="fc" id="L212">      app.stroke(255,255,255);</span>
+<span class="fc" id="L213">      app.line(this.x+8, this.y+8, this.targetX+8, this.targetY+8);</span>
+    }
+    
+    
+
+<span class="fc" id="L218">  }</span>
+
+  public static void toggleScatterMode(List&lt;Ghost&gt; ghosts, App app) {
+<span class="fc bfc" id="L221" title="All 2 branches covered.">    for (Ghost ghost: ghosts) {</span>
+<span class="fc" id="L222">      ghost.toggleScatter(app);</span>
+<span class="fc" id="L223">    }</span>
+<span class="fc" id="L224">  } </span>
+  public static void triggerFrightenedMode(List&lt;Ghost&gt; ghosts, App app) {
+<span class="fc bfc" id="L226" title="All 2 branches covered.">    for (Ghost ghost: ghosts) {</span>
+<span class="fc" id="L227">      ghost.triggerFrightened(app);</span>
+<span class="fc" id="L228">    }</span>
+<span class="fc" id="L229">  }</span>
+
+  public static void endFrightenedMode(List&lt;Ghost&gt; ghosts, App app) {
+<span class="fc bfc" id="L232" title="All 2 branches covered.">    for (Ghost ghost: ghosts) {</span>
+<span class="fc" id="L233">      ghost.endFrightened(app);</span>
+<span class="fc" id="L234">      ghost.frameFrightenedStart = -1;</span>
+<span class="fc" id="L235">    }</span>
+<span class="fc" id="L236">  }</span>
+  public void setScatterLengths(Long[] longLengths) {
+<span class="fc" id="L238">    List&lt;Integer&gt; lengths = new ArrayList&lt;Integer&gt;();</span>
+<span class="fc" id="L239">    int total = 0;</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">    for (Long l : longLengths) {</span>
+<span class="fc" id="L241">      Integer n = l.intValue()*60;</span>
+<span class="fc" id="L242">      total += n;</span>
+<span class="fc" id="L243">      lengths.add(total);</span>
+    }
+<span class="fc" id="L245">    this.scatterLengths = lengths;</span>
+<span class="fc" id="L246">    this.scatterLengthsTotal = total;</span>
+<span class="fc" id="L247">  }</span>
+
+  public void checkScatterMode(App app) {
+<span class="fc bfc" id="L250" title="All 2 branches covered.">    if (this.scatterLengths.contains(app.frameCount % this.scatterLengthsTotal+1)) {</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">      this.scatterMode = !this.scatterMode;</span>
+    }
+<span class="fc" id="L253">  }</span>
+
+  public static void toggleDebugMode(App app) {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">    for (Ghost ghost: app.getGhosts()) {</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">      ghost.debugMode = !ghost.debugMode;</span>
+<span class="fc" id="L258">    }</span>
+<span class="fc" id="L259">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

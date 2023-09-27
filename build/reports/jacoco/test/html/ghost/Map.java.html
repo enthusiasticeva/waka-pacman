@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Map.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment_2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Map.java</span></div><h1>Map.java</h1><pre class="source lang-java linenums">package ghost;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+public class Map {
+  private String filename;
+  private int fruitTotal;
+  private int fruitCurrent;
+  private List&lt;List&lt;Cell&gt;&gt; cellMap;
+  private int[] wakaStartCoords;
+  private List&lt;int[]&gt; ghostStartCoords;
+  private List&lt;int[]&gt; ambusherStartCoords; 
+  private List&lt;int[]&gt; chaserStartCoords; 
+  private List&lt;int[]&gt; ignorantStartCoords; 
+  private List&lt;int[]&gt; whimStartCoords; 
+
+<span class="fc" id="L22">  public Map(String filename) {</span>
+<span class="fc" id="L23">    this.filename = filename;</span>
+<span class="fc" id="L24">    this.wakaStartCoords = new int[] {0,0};</span>
+<span class="fc" id="L25">    this.ghostStartCoords = new ArrayList&lt;int[]&gt;();</span>
+<span class="fc" id="L26">    this.ambusherStartCoords = new ArrayList&lt;int[]&gt;();</span>
+<span class="fc" id="L27">    this.chaserStartCoords = new ArrayList&lt;int[]&gt;();</span>
+<span class="fc" id="L28">    this.ignorantStartCoords = new ArrayList&lt;int[]&gt;();</span>
+<span class="fc" id="L29">    this.whimStartCoords = new ArrayList&lt;int[]&gt;();</span>
+<span class="fc" id="L30">    this.fruitTotal = 0;</span>
+<span class="fc" id="L31">    this.fruitCurrent = 0;</span>
+<span class="fc" id="L32">    this.cellMap = new ArrayList&lt;List&lt;Cell&gt;&gt;();</span>
+<span class="fc" id="L33">    this.parseMap();</span>
+<span class="fc" id="L34">  }</span>
+
+  /**
+  * Takes in a filename, ensures the file exists and returns a Scanner linked to the file.
+  * If the file is not found, null is returned
+  * @param filename The name of the file to be read
+  * @return Scanner or null
+  */
+  public static Scanner openFileRead (String filename) {
+    try {
+<span class="fc" id="L44">      File myFile = new File(filename);</span>
+<span class="fc" id="L45">      Scanner scan = new Scanner(myFile); </span>
+<span class="fc" id="L46">      return scan;</span>
+
+<span class="nc" id="L48">    } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L49">      return null;</span>
+    }
+  }
+
+  /**
+  * Takes the map file called this.filename, and parses it into a two-dimensional List of cell objects, which is stored as this.cellMap.
+  */
+  public void parseMap() {
+<span class="fc" id="L57">    List&lt;List&lt;String&gt;&gt; lettersMap = new ArrayList&lt;List&lt;String&gt;&gt;();</span>
+
+<span class="fc" id="L59">    Scanner file = openFileRead(this.filename);</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">    while (file.hasNext()) {</span>
+<span class="fc" id="L62">      String line = file.next().trim();</span>
+<span class="fc" id="L63">      String[] letters = line.split(&quot;&quot;);</span>
+<span class="fc" id="L64">      lettersMap.add(Arrays.asList(letters));</span>
+<span class="fc" id="L65">    }</span>
+
+<span class="fc" id="L67">    int rowNum = 0;</span>
+<span class="fc" id="L68">    int colNum = 0;</span>
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">    for (List&lt;String&gt; row: lettersMap) {</span>
+<span class="fc" id="L71">      List&lt;Cell&gt; cellRow = new ArrayList&lt;Cell&gt;();</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">      for (String col: row) {</span>
+        Cell c;
+        int num;
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (col.equals(&quot;p&quot;)) {</span>
+<span class="fc" id="L76">          num = 0;</span>
+<span class="fc" id="L77">          this.wakaStartCoords[0] = colNum;</span>
+<span class="fc" id="L78">          this.wakaStartCoords[1] = rowNum;</span>
+          // num = 0;
+
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        } else if (col.equals(&quot;a&quot;)) {</span>
+<span class="fc" id="L82">          num = 9;</span>
+<span class="fc" id="L83">          int[] thisGhost = new int[] {colNum,rowNum};</span>
+<span class="fc" id="L84">          this.ambusherStartCoords.add(thisGhost);</span>
+          // num = 0;
+
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        } else if (col.equals(&quot;c&quot;)) {</span>
+<span class="fc" id="L88">          num = 9;</span>
+<span class="fc" id="L89">          int[] thisGhost = new int[] {colNum,rowNum};</span>
+<span class="fc" id="L90">          this.chaserStartCoords.add(thisGhost);</span>
+          // num = 0;
+
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        } else if (col.equals(&quot;i&quot;)) {</span>
+<span class="fc" id="L94">          num = 9;</span>
+<span class="fc" id="L95">          int[] thisGhost = new int[] {colNum,rowNum};</span>
+<span class="fc" id="L96">          this.ignorantStartCoords.add(thisGhost);</span>
+          // num = 0;
+
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        } else if (col.equals(&quot;w&quot;)) {</span>
+<span class="fc" id="L100">          num = 9;</span>
+<span class="fc" id="L101">          int[] thisGhost = new int[] {colNum,rowNum};</span>
+<span class="fc" id="L102">          this.whimStartCoords.add(thisGhost);</span>
+          // num = 0;
+
+<span class="fc" id="L105">        } else {</span>
+<span class="fc bfc" id="L106" title="All 4 branches covered.">          if (col.equals(&quot;7&quot;) || col.equals(&quot;8&quot;)) {</span>
+<span class="fc" id="L107">            this.fruitTotal += 1;</span>
+          }
+<span class="fc" id="L109">          num = Integer.valueOf(col);</span>
+        }
+        // System.out.print(col);
+
+<span class="fc bfc" id="L113" title="All 4 branches covered.">        if (num &gt; 0 &amp;&amp; num &lt; 7) {</span>
+<span class="fc" id="L114">          c = new Wall(num, colNum*16, rowNum*16);</span>
+        } else {
+<span class="fc" id="L116">          c = new Space(num, colNum*16, rowNum*16);</span>
+        }
+        // System.out.print(c.getType());
+        // System.out.print(&quot; &quot;);
+<span class="fc" id="L120">        colNum ++;</span>
+<span class="fc" id="L121">        cellRow.add(c);</span>
+<span class="fc" id="L122">      }</span>
+      // System.out.println();
+<span class="fc" id="L124">      this.cellMap.add(cellRow);</span>
+<span class="fc" id="L125">      rowNum ++;</span>
+<span class="fc" id="L126">      colNum = 0;</span>
+<span class="fc" id="L127">    }</span>
+    // this.fruitCurrent = this.fruitTotal;
+<span class="fc" id="L129">  }</span>
+
+
+  /**
+  * Takes in a filename, ensures the file exists and 
+  * returns a Scanner linked to the file.
+  * @param app the App on which the lives are being displayed
+  */
+  public void displayLives(App app) {
+<span class="fc" id="L138">    int posY = app.height-32;</span>
+<span class="fc" id="L139">    int posX = 8;</span>
+
+<span class="fc bfc" id="L141" title="All 2 branches covered.">    for (int x = 0; x &lt; app.getWaka().getLives(); x++) {</span>
+<span class="fc" id="L142">      app.image(Direction.right.getSprite(), posX, posY);</span>
+<span class="fc" id="L143">      posX += 32;</span>
+    }
+    
+<span class="fc" id="L146">  }</span>
+
+  
+
+  /**
+  * Takes in a filename, ensures the file exists and returns a Scanner linked to the file.
+  * If the file is not found, null is returned
+  * @param x the x position (in pixels) of the waka
+  * @param y the y position (in pixels) of the waka
+  * @param app the app that the waka belongs to
+  * @return boolean
+  */
+  public boolean collectFruit(int x, int y, App app) {
+<span class="fc bfc" id="L159" title="All 2 branches covered.">    if (this.cellMap.get(y).get(x).getType() == cellType.Fruit) {</span>
+<span class="fc" id="L160">      this.fruitCurrent ++;</span>
+<span class="fc" id="L161">      this.cellMap.get(y).get(x).empty();</span>
+<span class="fc" id="L162">      return true;</span>
+    }
+<span class="fc bfc" id="L164" title="All 2 branches covered.">    if (this.cellMap.get(y).get(x).getType() == cellType.SuperFruit) {</span>
+<span class="fc" id="L165">      Ghost.triggerFrightenedMode(app.getGhosts(), app);</span>
+<span class="fc" id="L166">      this.fruitCurrent ++;</span>
+<span class="fc" id="L167">      this.cellMap.get(y).get(x).empty();</span>
+<span class="fc" id="L168">      return true;</span>
+    }
+<span class="fc" id="L170">    return false;</span>
+  }
+
+  public void setFruitCurrent(int f) {
+<span class="fc" id="L174">    this.fruitCurrent = f;</span>
+<span class="fc" id="L175">  }</span>
+
+  public int getFruitCurrent() {
+<span class="fc" id="L178">    return this.fruitCurrent;</span>
+  }
+
+  public int getFruitTotal() {
+<span class="fc" id="L182">    return this.fruitTotal;</span>
+  }
+
+  public List&lt;List&lt;Cell&gt;&gt; getCellMap() {
+<span class="fc" id="L186">    return this.cellMap;</span>
+  }
+
+  public List&lt;int[]&gt; getGhostStartCoords() {
+<span class="nc" id="L190">    return this.ghostStartCoords;</span>
+  }
+
+  public int[] getWakaStartCoords() {
+<span class="fc" id="L194">    return this.wakaStartCoords;</span>
+  }
+
+  public List&lt;int[]&gt; getGhostTypeStartCoords(ghostType g) {
+<span class="fc bfc" id="L198" title="All 2 branches covered.">    if (g == ghostType.Ambusher) {</span>
+<span class="fc" id="L199">      return this.ambusherStartCoords;</span>
+    }
+<span class="fc bfc" id="L201" title="All 2 branches covered.">    if (g == ghostType.Chaser) {</span>
+<span class="fc" id="L202">      return this.chaserStartCoords;</span>
+    }
+<span class="fc bfc" id="L204" title="All 2 branches covered.">    if (g == ghostType.Ignorant) {</span>
+<span class="fc" id="L205">      return this.ignorantStartCoords;</span>
+    }
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">    if (g == ghostType.Whim) {</span>
+<span class="fc" id="L208">      return this.whimStartCoords;</span>
+    }
+<span class="nc" id="L210">    return null;</span>
+  }
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

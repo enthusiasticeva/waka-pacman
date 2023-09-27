@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ghost.AppTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2023-09-27T01:38:47" hostname="Evas-MacBook-Pro-2.local" time="2.491">
+  <properties/>
+  <testcase name="constructorTest()" classname="ghost.AppTest" time="0.005"/>
+  <testcase name="testDraw()" classname="ghost.AppTest" time="2.34"/>
+  <testcase name="testKeyPressed()" classname="ghost.AppTest" time="0.003"/>
+  <testcase name="setupTest()" classname="ghost.AppTest" time="0.138"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[java.lang.NullPointerException
+	at processing.awt.PGraphicsJava2D.imageImpl(PGraphicsJava2D.java:1574)
+	at processing.core.PGraphics.image(PGraphics.java:3773)
+	at processing.core.PApplet.image(PApplet.java:12611)
+	at ghost.Cell.draw(Cell.java:83)
+	at ghost.Cell.drawAll(Cell.java:94)
+	at ghost.App.draw(App.java:113)
+	at processing.core.PApplet.handleDraw(PApplet.java:2426)
+	at processing.awt.PSurfaceAWT$12.callDraw(PSurfaceAWT.java:1557)
+	at processing.core.PSurfaceNone$AnimationThread.run(PSurfaceNone.java:316)
+Warning: the fonts "Times" and "Lucida Bright" are not available for the Java logical font "Serif", which may have unexpected appearance or behavior. Re-enable the "Times" font to remove this warning.
+Warning: the fonts "Times" and "Lucida Bright" are not available for the Java logical font "Serif", which may have unexpected appearance or behavior. Re-enable the "Times" font to remove this warning.
+]]></system-err>
+</testsuite>

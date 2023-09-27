@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ghost.EntityTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2023-09-27T01:38:49" hostname="Evas-MacBook-Pro-2.local" time="0.064">
+  <properties/>
+  <testcase name="testCheckCollision()" classname="ghost.EntityTest" time="0.01"/>
+  <testcase name="testChangeDirection()" classname="ghost.EntityTest" time="0.012"/>
+  <testcase name="testMoveForward()" classname="ghost.EntityTest" time="0.012"/>
+  <testcase name="testReturnToOrigin()" classname="ghost.EntityTest" time="0.015"/>
+  <testcase name="testGetDir()" classname="ghost.EntityTest" time="0.003"/>
+  <testcase name="testConstructor()" classname="ghost.EntityTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

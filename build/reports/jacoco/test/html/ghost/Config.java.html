@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Config.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment_2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Config.java</span></div><h1>Config.java</h1><pre class="source lang-java linenums">package ghost;
+
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+<span class="fc" id="L11">public class Config {</span>
+  private String mapPath;
+  private Long lives;
+  private Long longSpeed;
+  private int speed;
+  private Long[] modeLengths;
+  private Long frightenedLength;
+
+  public void setMapPath(String s) {
+<span class="fc" id="L20">    this.mapPath = s;</span>
+<span class="fc" id="L21">  }</span>
+
+  public void parseConfig(String filename) {
+
+<span class="fc" id="L25">    JSONParser parser = new JSONParser();</span>
+
+    try {
+<span class="fc" id="L28">      Object object = parser.parse(new FileReader(filename));</span>
+<span class="fc" id="L29">      JSONObject j = (JSONObject) object;</span>
+
+<span class="fc" id="L31">      this.mapPath = (String) j.get(&quot;map&quot;);</span>
+<span class="fc" id="L32">      this.lives = (Long) j.get(&quot;lives&quot;);</span>
+<span class="fc" id="L33">      this.longSpeed = (Long) j.get(&quot;speed&quot;);</span>
+<span class="fc" id="L34">      this.speed = this.longSpeed.intValue();</span>
+
+<span class="fc" id="L36">      this.frightenedLength = (Long) j.get(&quot;frightenedLength&quot;);</span>
+
+<span class="fc" id="L38">      JSONArray modesArr = (JSONArray) j.get(&quot;modeLengths&quot;);</span>
+
+<span class="fc" id="L40">       modeLengths = new Long[modesArr.size()];</span>
+
+<span class="fc" id="L42">      int i = 0;</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">      while (i &lt; modesArr.size()) {</span>
+<span class="fc" id="L44">        modeLengths[i] = (Long) modesArr.get(i);</span>
+<span class="fc" id="L45">        i ++;</span>
+      }
+
+    }
+<span class="nc" id="L49">    catch (ParseException e) {</span>
+<span class="nc" id="L50">      e.printStackTrace();</span>
+    }
+<span class="nc" id="L52">    catch (IOException e) {</span>
+<span class="nc" id="L53">      e.printStackTrace();</span>
+<span class="pc" id="L54">    }</span>
+<span class="fc" id="L55">  }</span>
+
+  public String getMapPath() {
+<span class="fc" id="L58">    return this.mapPath;</span>
+  }
+
+  public Long getLives() {
+<span class="fc" id="L62">    return this.lives;</span>
+  }
+
+  public int getSpeed() {
+<span class="fc" id="L66">    return this.speed;</span>
+  }
+
+  public Long[] getModeLengths() {
+<span class="fc" id="L70">    return this.modeLengths;</span>
+  }
+
+  public Long getFrightenedLength() {
+<span class="fc" id="L74">    return this.frightenedLength;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

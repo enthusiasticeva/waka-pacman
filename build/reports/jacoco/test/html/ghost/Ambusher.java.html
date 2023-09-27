@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ambusher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment_2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Ambusher.java</span></div><h1>Ambusher.java</h1><pre class="source lang-java linenums">package ghost;
+
+import java.util.Random;
+
+public class Ambusher extends Ghost {
+  public Ambusher(int x, int y, Map map, int speed, Waka waka) {
+<span class="fc" id="L7">    super(x, y, map, speed, waka, ghostType.Ambusher);</span>
+<span class="fc" id="L8">  }</span>
+
+  public void tick(App app) {
+
+<span class="fc" id="L12">    this.checkFrightenedEnd(app);</span>
+<span class="fc" id="L13">    this.checkScatterMode(app);</span>
+
+<span class="fc bfc" id="L15" title="All 2 branches covered.">    if (!this.frightenedMode) {</span>
+<span class="fc bfc" id="L16" title="All 2 branches covered.">      if (this.scatterMode) {</span>
+<span class="fc" id="L17">        this.targetX = app.width;</span>
+<span class="fc" id="L18">        this.targetY = 0;</span>
+      } else {
+<span class="fc" id="L20">        this.findTarget();</span>
+      }
+    } else {
+<span class="fc" id="L23">      Random random = new Random();</span>
+<span class="fc" id="L24">      this.targetX = random.nextInt(app.width);</span>
+<span class="fc" id="L25">      this.targetY = random.nextInt(app.height);</span>
+    }
+<span class="pc bpc" id="L27" title="1 of 4 branches missed.">    if (this.y % 16 == 0 &amp;&amp; this.x % 16 == 0) {</span>
+<span class="fc" id="L28">      int dirCode = this.chooseDirection(this.targetX,this.targetY);</span>
+<span class="fc" id="L29">      this.changeDirection(getDirection(dirCode));</span>
+    }
+
+<span class="fc" id="L32">    app.getWaka().checkWakaGhostCollision(app);</span>
+
+<span class="fc" id="L34">    this.moveForwards();</span>
+<span class="fc" id="L35">  }</span>
+
+  public void findTarget() {
+<span class="fc" id="L38">    Direction d = this.waka.direction;</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    if (d == Direction.right) {</span>
+<span class="fc" id="L40">      this.targetX = this.waka.x + 5*16;</span>
+<span class="fc" id="L41">      this.targetY = this.waka.y;</span>
+    }
+<span class="fc bfc" id="L43" title="All 2 branches covered.">    if (d == Direction.left) {</span>
+<span class="fc" id="L44">      this.targetX = this.waka.x - 4*16;</span>
+<span class="fc" id="L45">      this.targetY = this.waka.y;</span>
+    }
+<span class="fc bfc" id="L47" title="All 2 branches covered.">    if (d == Direction.up) {</span>
+<span class="fc" id="L48">      this.targetX = this.waka.x;</span>
+<span class="fc" id="L49">      this.targetY = this.waka.y - 4*16;</span>
+    }
+<span class="fc bfc" id="L51" title="All 2 branches covered.">    if (d == Direction.down) {</span>
+<span class="fc" id="L52">      this.targetX = this.waka.x;</span>
+<span class="fc" id="L53">      this.targetY = this.waka.y+ 5*16;</span>
+    }
+<span class="fc" id="L55">  }</span>
+
+  
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

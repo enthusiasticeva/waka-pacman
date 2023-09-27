@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment_2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package ghost;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import processing.core.PApplet;
+import processing.core.PFont;
+
+public class App extends PApplet {
+
+    private static final int WIDTH = 448;
+    private static final int HEIGHT = 576;
+    private Map map;
+    private Config config;
+    private Waka waka;
+    private List&lt;Ghost&gt; ghosts;
+    private Chaser chaserForWhim;
+    private PFont myFont;
+    private int endScreenFrameStart;
+
+<span class="fc" id="L21">    public App() {</span>
+        //Set up your objects
+<span class="fc" id="L23">        config = new Config();</span>
+<span class="fc" id="L24">        config.parseConfig(&quot;config.json&quot;);</span>
+<span class="fc" id="L25">        this.ghosts = new ArrayList&lt;Ghost&gt;();</span>
+        
+<span class="fc" id="L27">        this.restart();</span>
+<span class="fc" id="L28">    }</span>
+
+    // Used for testing.
+<span class="fc" id="L31">    public App(String filename) {</span>
+<span class="fc" id="L32">      this.config = new Config();</span>
+<span class="fc" id="L33">      config.parseConfig(&quot;config.json&quot;);</span>
+
+<span class="fc" id="L35">      this.config.setMapPath(filename);</span>
+
+<span class="fc" id="L37">      this.ghosts = new ArrayList&lt;Ghost&gt;();</span>
+      
+<span class="fc" id="L39">      this.restart();</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+    * Loads all images from filenames to PImages, and assigns them as sprites to the appropriate objects.
+    * &lt;em&gt;&quot;The setup() function is called once when the program starts. It's used to define initial enviroment 
+    * properties such as screen size and background color and to load media such as images and fonts as the 
+    * program starts.&quot;&lt;/em&gt;
+    * - excerpt taken from the PApplet Documentation.
+    */
+    public void setup() {
+<span class="fc" id="L50">      frameRate(60);</span>
+
+      // Load images
+
+<span class="fc bfc" id="L54" title="All 2 branches covered.">      for (cellType type: cellType.values()) {</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (type.getImagePath() == null) {</span>
+<span class="fc" id="L56">          type.setSprite(null);</span>
+        } else {
+<span class="fc" id="L58">          type.setSprite(this.loadImage(type.getImagePath()));</span>
+        }
+      }
+
+<span class="fc bfc" id="L62" title="All 2 branches covered.">      for (Direction dir: Direction.values()) {</span>
+<span class="fc" id="L63">        dir.setSprite(this.loadImage(dir.getWakaImagePath()));</span>
+      }
+
+<span class="fc bfc" id="L66" title="All 2 branches covered.">      for (ghostType g: ghostType.values()) {</span>
+<span class="fc" id="L67">        g.setSprite(this.loadImage(g.getImagePath()));</span>
+      }
+<span class="fc" id="L69">      Ghost.setFrightenedSprite(this.loadImage(&quot;frightened.png&quot;));</span>
+
+<span class="fc" id="L71">      Waka.setClosedSprite(this.loadImage(&quot;playerClosed.png&quot;));</span>
+<span class="fc" id="L72">      this.waka.setSprite(this.loadImage(&quot;playerClosed.png&quot;));</span>
+
+<span class="fc" id="L74">      myFont = this.createFont(&quot;PressStart2P-Regular.ttf&quot;, 16);</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Defines the dimensions of the screen
+     */
+    public void settings() {
+<span class="fc" id="L81">        size(WIDTH, HEIGHT);</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * A function called every time a key is pressed. 
+     * The key code of the key pressed is stored in this.keyCode, and can then be accessed
+     */
+    public void keyPressed() {
+      // 32 is spacebar
+<span class="fc bfc" id="L90" title="All 2 branches covered.">      if (this.keyCode == 32) {</span>
+<span class="fc" id="L91">        Ghost.toggleDebugMode(this);</span>
+      }
+      // 37,38,39,40 are the arrowkeys
+<span class="fc bfc" id="L94" title="All 4 branches covered.">      if (this.keyCode &lt; 37 || this.keyCode &gt; 40) {</span>
+<span class="fc" id="L95">        return;</span>
+      }
+      
+<span class="fc" id="L98">      this.waka.setNextDirection(Waka.getDirection(keyCode));</span>
+<span class="fc" id="L99">    }</span>
+
+    /**
+     * Calls tick and draw for each element to draw on the screen.
+     */
+    public void draw() { 
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (endScreenFrameStart == -1) {</span>
+<span class="fc" id="L106">          background(0, 0, 0);</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">          if (this.waka.getLives() &gt; -1) {</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">            if (this.map.getFruitCurrent() &lt; this.map.getFruitTotal()){  </span>
+<span class="fc" id="L109">              Cell.drawAll(this, this.map.getCellMap());</span>
+<span class="fc" id="L110">              this.map.displayLives(this);</span>
+<span class="fc" id="L111">              this.waka.tick(this);</span>
+<span class="fc" id="L112">              this.waka.draw(this);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">              for (Ghost g: ghosts) {</span>
+<span class="fc" id="L114">                g.tick(this);</span>
+<span class="fc" id="L115">                g.draw(this);</span>
+<span class="fc" id="L116">              }</span>
+            } else {
+<span class="nc" id="L118">              textSize(16);</span>
+<span class="nc" id="L119">              textFont(this.myFont);</span>
+<span class="nc" id="L120">              textAlign(App.CENTER, App.CENTER);</span>
+<span class="nc" id="L121">              text(&quot;YOU WIN&quot;,this.width/2,this.height/2);</span>
+<span class="nc" id="L122">              this.endScreenFrameStart = this.frameCount;</span>
+            }
+          } else {
+<span class="fc" id="L125">            textSize(16);</span>
+<span class="fc" id="L126">            textAlign(App.CENTER, App.CENTER);</span>
+<span class="fc" id="L127">            textFont(this.myFont);</span>
+<span class="fc" id="L128">            text(&quot;GAME OVER&quot;,this.width/2,this.height/2);</span>
+<span class="fc" id="L129">            this.endScreenFrameStart = this.frameCount;</span>
+          }
+        } else {
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">          if (this.frameCount == this.endScreenFrameStart + 10 * 60) {</span>
+<span class="nc" id="L133">            this.restart();</span>
+          }
+        }
+
+<span class="fc" id="L137">    }</span>
+
+    public void restart() {
+<span class="fc" id="L140">      this.endScreenFrameStart = -1;</span>
+<span class="fc" id="L141">      this.map = new Map(config.getMapPath());</span>
+<span class="fc" id="L142">      int x = this.map.getWakaStartCoords()[0]*16;</span>
+<span class="fc" id="L143">      int y = this.map.getWakaStartCoords()[1]*16;</span>
+<span class="fc" id="L144">      this.waka = new Waka(x, y, this.map, config.getSpeed(), config.getLives().intValue());</span>
+<span class="fc" id="L145">      this.waka.setSprite(Waka.getClosedSprite());</span>
+<span class="fc" id="L146">      this.waka.setMouthOpen(false);</span>
+
+<span class="fc" id="L148">      this.ghosts = new ArrayList&lt;Ghost&gt;();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">      for (int[] g: this.map.getGhostTypeStartCoords(ghostType.Ambusher)) {</span>
+<span class="fc" id="L150">        this.ghosts.add(new Ambusher(g[0]*16, g[1]*16, this.map, this.config.getSpeed(), this.waka));</span>
+<span class="fc" id="L151">      }</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">      for (int[] g: this.map.getGhostTypeStartCoords(ghostType.Chaser)) {</span>
+<span class="fc" id="L153">        this.chaserForWhim = new Chaser(g[0]*16, g[1]*16, this.map, this.config.getSpeed(), this.waka);</span>
+<span class="fc" id="L154">        this.ghosts.add(this.chaserForWhim);</span>
+<span class="fc" id="L155">      }</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">      for (int[] g: this.map.getGhostTypeStartCoords(ghostType.Ignorant)) {</span>
+<span class="fc" id="L157">        this.ghosts.add(new Ignorant(g[0]*16, g[1]*16, this.map, this.config.getSpeed(), this.waka));</span>
+<span class="fc" id="L158">      }</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">      for (int[] g: this.map.getGhostTypeStartCoords(ghostType.Whim)) {</span>
+<span class="fc" id="L160">        this.ghosts.add(new Whim(g[0]*16, g[1]*16, this.map, this.config.getSpeed(), this.waka, this.chaserForWhim));</span>
+<span class="fc" id="L161">      }</span>
+
+<span class="fc bfc" id="L163" title="All 2 branches covered.">      for (Ghost ghost: this.ghosts) {</span>
+<span class="fc" id="L164">        ghost.setScatterLengths(this.config.getModeLengths());</span>
+<span class="fc" id="L165">      }</span>
+<span class="fc" id="L166">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L169">      PApplet.main(&quot;ghost.App&quot;);</span>
+<span class="nc" id="L170">    }</span>
+
+    public Config getConfig() {
+<span class="fc" id="L173">      return this.config;</span>
+    }
+
+    public Waka getWaka() {
+<span class="fc" id="L177">      return this.waka;</span>
+    }
+
+    public List&lt;Ghost&gt; getGhosts() {
+<span class="fc" id="L181">      return this.ghosts;</span>
+    }
+
+    public int getEndScreenStartFrame() {
+<span class="fc" id="L185">      return this.endScreenFrameStart;</span>
+    }
+
+    public PFont getFont() {
+<span class="fc" id="L189">      return this.myFont;</span>
+    }
+
+    public Map getMap() {
+<span class="fc" id="L193">      return this.map;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
